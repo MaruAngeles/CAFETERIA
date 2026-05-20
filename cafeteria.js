@@ -261,11 +261,6 @@ formulario.addEventListener("submit", function (evento) {
 });
 
 
-// ==========================
-// MODULO CLIENTE
-// ==========================
-
-
 // para mostrar menu en consola
 function consultarProductos() {
 
