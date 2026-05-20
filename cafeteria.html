@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sistema Cafeteria</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5eee6;
+            margin: 30px;
+            color: #5c4033;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .contenedor {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .campo {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #c8b6a6;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 5px;
+            margin-top: 5px;
+            color: white;
+        }
+
+        .guardar {
+            background-color: #8b6f5c;
+        }
+
+        .editar {
+            background-color: #a67b5b;
+        }
+
+        .eliminar {
+            background-color: #6f5647;
+        }
+
+        .pedir {
+            background-color: #5c4033;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background-color: #8b6f5c;
+            color: white;
+        }
+
+        th,
+        td {
+            border: 1px solid #d8c3b5;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .caja {
+            margin-top: 20px;
+            background-color: #fff8f2;
+            padding: 15px;
+            border-radius: 10px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <h1>Sistema Cafeteria</h1>
+
+    <div class="contenedor">
+
+        <!-- formulario para agregar productos -->
+        <form id="formProducto">
+
+            <input type="hidden" id="productoId">
+
+            <div class="campo">
+
+                <label>Producto</label>
+
+                <input type="text" id="nombre">
+
+            </div>
+
+            <div class="campo">
+
+                <label>Precio</label>
+
+                <input type="number" id="precio">
+
+            </div>
+
+            <div class="campo">
+
+                <label>Categoria</label>
+
+                <select id="categoria">
+
+                    <option value="">Selecciona</option>
+                    <option value="Comida">Comida</option>
+                    <option value="Bebida">Bebida</option>
+                    <option value="Postre">Postre</option>
+
+                </select>
+
+            </div>
+
+            <button class="guardar" type="submit">
+                Guardar producto
+            </button>
+
+        </form>
+
+        <!-- tabla donde se ven los productos -->
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+                    <th>Producto</th>
+                    <th>Precio</th>
+                    <th>Categoria</th>
+                    <th>Acciones</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="tablaProductos"></tbody>
+
+        </table>
+
+        <!-- parte de caja -->
+        <div class="caja">
+
+            <h2>Modulo Caja</h2>
+
+            <p><strong>Total acumulado:</strong></p>
+
+            <h3 id="totalCaja">$0</h3>
+
+            <h3>Pedidos realizados</h3>
+
+            <ul id="listaPedidos"></ul>
+
+        </div>
+
+    </div>
+
+    <script src="cafeteria.js"></script>
+
+</body>
+
+</html>
