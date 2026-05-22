@@ -1,137 +1,94 @@
-// productos que ya vienen por defecto
+// Productos iniciales de la cafeteria.
 let productos = [
-
     {
         id: 1,
         nombre: "Cafe Latte",
         precio: 65,
         categoria: "Bebida"
     },
-
     {
         id: 2,
         nombre: "Cheesecake",
         precio: 75,
         categoria: "Postre"
     }
-
 ];
 
-
-// aqui se guardan los pedidos
+// Aqui se guardan los pedidos.
 let pedidos = [];
 
-
-// total de todo lo vendido
+// Total de todo lo vendido.
 let totalAcumulado = 0;
 
+// Busca el siguiente ID para un producto nuevo.
+function obtenerSiguienteId() {
+    if (productos.length === 0) {
+        return 1;
+    }
 
-// referencias del html
-const formulario = document.getElementById("formProducto");
-
-const inputId = document.getElementById("productoId");
-const inputNombre = document.getElementById("nombre");
-const inputPrecio = document.getElementById("precio");
-const inputCategoria = document.getElementById("categoria");
-
-const tablaProductos = document.getElementById("tablaProductos");
-
-const totalCaja = document.getElementById("totalCaja");
-
-const listaPedidos = document.getElementById("listaPedidos");
-
-
-// para mostrar los productos en la tabla
-function renderizarProductos() {
-
-    tablaProductos.innerHTML = "";
-
-    productos.forEach(function (producto) {
-
-        let fila = document.createElement("tr");
-
-        fila.innerHTML = `
-
-            <td>${producto.id}</td>
-            <td>${producto.nombre}</td>
-            <td>$${producto.precio}</td>
-            <td>${producto.categoria}</td>
-
-            <td>
-
-                <button class="pedir"
-                onclick="agregarPedido(${producto.id})">
-                    Pedir
-                </button>
-
-                <button class="editar"
-                onclick="editarProducto(${producto.id})">
-                    Editar
-                </button>
-
-                <button class="eliminar"
-                onclick="eliminarProducto(${producto.id})">
-                    Eliminar
-                </button>
-
-            </td>
-
-        `;
-
-        tablaProductos.appendChild(fila);
-
+    let ids = productos.map(function(producto) {
+        return producto.id;
     });
 
+    return Math.max(...ids) + 1;
 }
 
+// Muestra los productos en consola.
+function consultarProductos() {
+    console.log("===== MENU =====");
 
-// para agregar productos nuevos
+    productos.forEach(function(producto) {
+        console.log(
+            producto.id + ". " +
+            producto.nombre + " - $" +
+            producto.precio + " - " +
+            producto.categoria
+        );
+    });
+
+    return productos;
+}
+
+// Busca un producto por su ID.
+function buscarProducto(id) {
+    return productos.find(function(producto) {
+        return producto.id === id;
+    });
+}
+
+// Agrega un producto nuevo.
 function agregarProducto(nombre, precio, categoria) {
+    if (nombre === "" || precio <= 0 || categoria === "") {
+        console.log("Faltan datos del producto.");
+        return;
+    }
 
     let nuevoProducto = {
-
-        id: productos.length + 1,
+        id: obtenerSiguienteId(),
         nombre: nombre,
         precio: precio,
         categoria: categoria
-
     };
 
     productos.push(nuevoProducto);
 
     console.log("Producto agregado:");
     console.log(nuevoProducto);
-
-    renderizarProductos();
-
 }
 
-
-// para cargar datos y editarlos
-function editarProducto(id) {
-
-    let producto = productos.find(function (p) {
-
-        return p.id === id;
-
-    });
-
-    inputId.value = producto.id;
-    inputNombre.value = producto.nombre;
-    inputPrecio.value = producto.precio;
-    inputCategoria.value = producto.categoria;
-
-}
-
-
-// guardar cambios del producto
+// Actualiza un producto existente.
 function actualizarProducto(id, nombre, precio, categoria) {
+    let producto = buscarProducto(id);
 
-    let producto = productos.find(function (p) {
+    if (!producto) {
+        console.log("Producto no encontrado.");
+        return;
+    }
 
-        return p.id === id;
-
-    });
+    if (nombre === "" || precio <= 0 || categoria === "") {
+        console.log("Faltan datos del producto.");
+        return;
+    }
 
     producto.nombre = nombre;
     producto.precio = precio;
@@ -139,207 +96,127 @@ function actualizarProducto(id, nombre, precio, categoria) {
 
     console.log("Producto actualizado:");
     console.log(producto);
-
-    renderizarProductos();
-
 }
 
-
-// eliminar productos
+// Elimina un producto por su ID.
 function eliminarProducto(id) {
+    let cantidadInicial = productos.length;
 
-    productos = productos.filter(function (producto) {
-
+    productos = productos.filter(function(producto) {
         return producto.id !== id;
-
     });
 
-    console.log(`Producto eliminado con ID: ${id}`);
+    if (productos.length === cantidadInicial) {
+        console.log("Producto no encontrado.");
+        return;
+    }
 
-    renderizarProductos();
-
+    console.log("Producto eliminado con ID: " + id);
 }
 
+// Crea un pedido con un producto del menu.
+function crearPedidoCliente(idProducto) {
+    let producto = buscarProducto(idProducto);
 
-// funcion de caja para agregar pedidos
-function agregarPedido(idProducto) {
-
-    let producto = productos.find(function (p) {
-
-        return p.id === idProducto;
-
-    });
+    if (!producto) {
+        console.log("Producto no encontrado.");
+        return;
+    }
 
     pedidos.push(producto);
-
     totalAcumulado += producto.precio;
 
-    console.log(`
-    Pedido agregado:
-    ${producto.nombre} - $${producto.precio}
-    `);
-
-    console.log("Pedidos actuales:");
-    console.log(pedidos);
-
-    console.log(`
-    Total acumulado:
-    $${totalAcumulado}
-    `);
-
-    renderizarPedidos();
-
+    console.log("Pedido agregado:");
+    console.log(producto.nombre + " - $" + producto.precio);
 }
 
-
-// para mostrar pedidos en pantalla
-function renderizarPedidos() {
-
-    listaPedidos.innerHTML = "";
-
-    pedidos.forEach(function (pedido) {
-
-        let elemento = document.createElement("li");
-
-        elemento.textContent =
-            `${pedido.nombre} - $${pedido.precio}`;
-
-        listaPedidos.appendChild(elemento);
-
-    });
-
-    totalCaja.textContent =
-        `$${totalAcumulado}`;
-
-}
-
-
-// guardar desde el formulario
-formulario.addEventListener("submit", function (evento) {
-
-    evento.preventDefault();
-
-    let id = inputId.value;
-
-    let nombre = inputNombre.value;
-
-    let precio = Number(inputPrecio.value);
-
-    let categoria = inputCategoria.value;
-
-    if (nombre === "" || precio <= 0 || categoria === "") {
-
-        console.log("Faltan datos");
-
-        return;
-
-    }
-
-    // si no hay id se agrega
-    if (id === "") {
-
-        agregarProducto(nombre, precio, categoria);
-
-    }
-
-    // si ya existe id entonces se edita
-    else {
-
-        actualizarProducto(
-            Number(id),
-            nombre,
-            precio,
-            categoria
-        );
-
-    }
-
-    formulario.reset();
-
-    inputId.value = "";
-
-});
-
-
-// para mostrar menu en consola
-function consultarProductos() {
-
-    console.log("===== MENU =====");
-
-    productos.forEach(function (producto) {
-
-        console.log(`
-        ID: ${producto.id}
-        Producto: ${producto.nombre}
-        Precio: $${producto.precio}
-        Categoria: ${producto.categoria}
-        `);
-
-    });
-
-}
-
-
-// para crear pedidos desde cliente
-function crearPedidoCliente(idProducto) {
-
-    let producto = productos.find(function (p) {
-
-        return p.id === idProducto;
-
-    });
-
-    if (producto) {
-
-        console.log(`
-        Cliente pidio:
-        ${producto.nombre} - $${producto.precio}
-        `);
-
-        agregarPedido(idProducto);
-
-    }
-
-    else {
-
-        console.log("Producto no encontrado");
-
-    }
-
-}
-
-
-// listar pedidos del cliente
+// Muestra los pedidos y el total en consola.
 function listarPedidosCliente() {
-
     console.log("===== PEDIDOS =====");
 
-    pedidos.forEach(function (pedido, index) {
+    if (pedidos.length === 0) {
+        console.log("No hay pedidos.");
+    }
 
-        console.log(`
-        ${index + 1}. ${pedido.nombre}
-        Precio: $${pedido.precio}
-        `);
-
+    pedidos.forEach(function(pedido, index) {
+        console.log(
+            (index + 1) + ". " +
+            pedido.nombre + " - $" +
+            pedido.precio
+        );
     });
 
-    console.log(`
-    TOTAL:
-    $${totalAcumulado}
-    `);
+    console.log("TOTAL: $" + totalAcumulado);
 
+    return pedidos;
 }
 
+// Herramienta de Node para escribir y leer desde la consola.
+const readline = require("node:readline/promises");
 
-// cargar todo al inicio
-renderizarProductos();
+const consola = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 
-renderizarPedidos();
+// Muestra las opciones disponibles.
+function mostrarOpciones() {
+    console.log("\n===== CAFETERIA =====");
+    console.log("1. Ver productos");
+    console.log("2. Agregar producto");
+    console.log("3. Editar producto");
+    console.log("4. Eliminar producto");
+    console.log("5. Crear pedido");
+    console.log("6. Ver pedidos");
+    console.log("0. Salir");
+}
 
+// Inicia el menu interactivo.
+async function iniciarMenu() {
+    let opcion = "";
 
-// ejemplos en consola
-consultarProductos();
+    while (opcion !== "0") {
+        mostrarOpciones();
+        opcion = await consola.question("Elige una opcion: ");
 
-crearPedidoCliente(1);
+        if (opcion === "1") {
+            consultarProductos();
+        } else if (opcion === "2") {
+            let nombre = await consola.question("Nombre: ");
+            let precio = Number(await consola.question("Precio: "));
+            let categoria = await consola.question("Categoria: ");
 
-listarPedidosCliente();
+            agregarProducto(nombre.trim(), precio, categoria.trim());
+        } else if (opcion === "3") {
+            consultarProductos();
+
+            let id = Number(await consola.question("ID a editar: "));
+            let nombre = await consola.question("Nuevo nombre: ");
+            let precio = Number(await consola.question("Nuevo precio: "));
+            let categoria = await consola.question("Nueva categoria: ");
+
+            actualizarProducto(id, nombre.trim(), precio, categoria.trim());
+        } else if (opcion === "4") {
+            consultarProductos();
+
+            let id = Number(await consola.question("ID a eliminar: "));
+
+            eliminarProducto(id);
+        } else if (opcion === "5") {
+            consultarProductos();
+
+            let idProducto = Number(await consola.question("ID del producto: "));
+
+            crearPedidoCliente(idProducto);
+        } else if (opcion === "6") {
+            listarPedidosCliente();
+        } else if (opcion !== "0") {
+            console.log("Opcion no valida.");
+        }
+    }
+
+    consola.close();
+    console.log("Programa terminado.");
+}
+
+iniciarMenu();
