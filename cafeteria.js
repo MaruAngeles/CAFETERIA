@@ -28,7 +28,6 @@ let totalAcumulado = 0;
 
 // referencias del html
 const formulario = document.getElementById("formProducto");
-
 const inputId = document.getElementById("productoId");
 const inputNombre = document.getElementById("nombre");
 const inputPrecio = document.getElementById("precio");
