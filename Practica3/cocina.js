@@ -49,10 +49,8 @@ let recetas = {
     }
 };
 
-
-
-
-
+HEAD
+a25940f(Caja)
 // Funcion para listar los productos
 function consultarProductos() {
 
@@ -510,7 +508,7 @@ async function menuCocina() {
 
         }
 
-        
+
         else if (opcion !== "0") {
 
             console.log("\nOpcion no valida.");
