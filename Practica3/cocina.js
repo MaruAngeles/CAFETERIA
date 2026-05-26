@@ -1,3 +1,4 @@
+// cocina.js
 let productos = [
     {
         id: 1,
@@ -22,6 +23,36 @@ let productos = [
     }
 ];
 
+
+let inventario = {
+    cafe: 4,
+    leche: 4,
+    azucar: 6,
+    quesoCrema: 2,
+    galleta: 2
+};
+
+let recetas = {
+    1: { // Cafe Latte
+        cafe: 1,
+        leche: 1,
+        azucar: 1
+    },
+    2: { // Cheesecake
+        quesoCrema: 1,
+        galleta: 1,
+        azucar: 1
+    },
+    3: { // Capuccino
+        cafe: 1,
+        leche: 1
+    }
+};
+
+
+
+
+
 // Funcion para listar los productos
 function consultarProductos() {
 
@@ -43,6 +74,96 @@ function buscarProducto(id) {
     return productos.find(
         producto => producto.id === id
     );
+
+}
+
+// Funcion para revisar si hay ingredientes suficientes para preparar
+// un producto.
+function obtenerIngredienteFaltante(receta) {
+
+    return Object.keys(receta).find(
+        ingrediente => inventario[ingrediente] < receta[ingrediente]
+    );
+
+}
+
+// Funcion para descontar ingredientes del inventario cuando se prepara
+// correctamente un producto.
+function descontarIngredientes(receta) {
+
+    Object.keys(receta).forEach(ingrediente => {
+
+        inventario[ingrediente] -= receta[ingrediente];
+
+    });
+
+}
+
+// Promesa para simular la preparacion en cocina.
+// - resolve: producto preparado.
+// - reject: error en cocina o falta ingrediente.
+function prepararProducto(id, simularError = false) {
+
+    return new Promise((resolve, reject) => {
+
+        let producto = buscarProducto(id);
+
+        setTimeout(() => {
+
+            if (!producto) {
+
+                reject("Producto no encontrado.");
+                return;
+
+            }
+
+            if (simularError) {
+
+                reject(`Error en cocina preparando ${producto.nombre}.`);
+                return;
+
+            }
+
+            let receta = recetas[producto.id];
+
+            if (!receta) {
+
+                reject(`No hay receta para ${producto.nombre}.`);
+                return;
+
+            }
+
+            let ingredienteFaltante = obtenerIngredienteFaltante(receta);
+
+            if (ingredienteFaltante) {
+
+                reject(`Falta ingrediente: ${ingredienteFaltante}.`);
+                return;
+
+            }
+
+            descontarIngredientes(receta);
+
+            resolve(`${producto.nombre} preparado correctamente.`);
+
+        }, 1000);
+
+    });
+
+}
+
+// Funcion para ver el inventario actual.
+function consultarInventario() {
+
+    console.log("\n===== INVENTARIO =====");
+
+    Object.keys(inventario).forEach(ingrediente => {
+
+        console.log(
+            `${ingrediente}: ${inventario[ingrediente]}`
+        );
+
+    });
 
 }
 
@@ -103,7 +224,7 @@ function eliminarProducto(id) {
 
 }
 
-//Muestra productos bararos
+//Muestra productos baratos
 function productosBaratos() {
 
     let baratos = productos.filter(
@@ -184,8 +305,12 @@ function postres() {
 
 module.exports = {
     productos,
+    inventario,
+    recetas,
     consultarProductos,
     buscarProducto,
+    prepararProducto,
+    consultarInventario,
     agregarProducto,
     editarProducto,
     eliminarProducto,
@@ -221,6 +346,9 @@ async function menuCocina() {
         console.log("6. Productos caros");
         console.log("7. Bebidas");
         console.log("8. Postres");
+        console.log("9. Preparar producto");
+        console.log("10. Ver inventario");
+        console.log("11. Simular error en cocina");
         console.log("0. Salir");
 
         opcion = await consola.question(
@@ -323,6 +451,62 @@ async function menuCocina() {
         else if (opcion === "8") {
 
             postres();
+
+        }
+
+        // Preparar producto usando promesa.
+        else if (opcion === "9") {
+
+            consultarProductos();
+
+            let id = Number(
+                await consola.question(
+                    "\nID del producto a preparar: "
+                )
+            );
+
+            try {
+
+                let resultado = await prepararProducto(id);
+
+                console.log(`\n${resultado}`);
+
+            } catch (error) {
+
+                console.log(`\n${error}`);
+
+            }
+
+        }
+        // Mostrar inventario.
+        else if (opcion === "10") {
+
+            consultarInventario();
+
+        }
+
+        // Simular un error en cocina usando la misma promesa.
+        else if (opcion === "11") {
+
+            consultarProductos();
+
+            let id = Number(
+                await consola.question(
+                    "\nID del producto a preparar: "
+                )
+            );
+
+            try {
+
+                let resultado = await prepararProducto(id, true);
+
+                console.log(`\n${resultado}`);
+
+            } catch (error) {
+
+                console.log(`\n${error}`);
+
+            }
 
         }
 
